@@ -7,9 +7,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SearchRepository implements PanacheRepository<Usuario> {
- 
-   
-    public List<Usuario> search(String login){
+
+    public List<Usuario> search(String login) {
         return list("login = ?1 ", login);
     }
 }

@@ -4,8 +4,7 @@ import java.util.List;
 
 import dev.application.dto.UsuarioResponseDTO;
 
-public interface  SearchService  {
+public interface SearchService {
 
-
-   List <UsuarioResponseDTO> findByLogin(String login);
+   List<UsuarioResponseDTO> search(String query);
 }
