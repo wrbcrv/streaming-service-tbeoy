@@ -1,4 +1,5 @@
 package dev.application.resource;
+
 import java.util.List;
 
 import dev.application.dto.UsuarioResponseDTO;
@@ -16,13 +17,11 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 
 public class SearchResource {
-@Inject
-       SearchService searchService;
-@GET
+    @Inject
+    SearchService searchService;
 
-    public List<UsuarioResponseDTO>  search(@QueryParam("q") String login){
-
-        
-        return searchService.findByLogin(login);
+    @GET
+    public List<UsuarioResponseDTO> search(@QueryParam("q") String query) {
+        return searchService.search(query);
     }
 }

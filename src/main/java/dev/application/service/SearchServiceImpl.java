@@ -8,21 +8,17 @@ import dev.application.model.Usuario;
 import dev.application.repository.SearchRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class SearchServiceImpl implements SearchService {
     @Inject
-        SearchRepository searchRepository;
+    SearchRepository searchRepository;
+
     @Override
-    public List<UsuarioResponseDTO> findByLogin(String login) {
-        List <Usuario>  usuario = searchRepository.search(login);
-        
-        if (login == null)
-        throw new NotFoundException("Usuário não encontrado");
+    public List<UsuarioResponseDTO> search(String query) {
+        List<Usuario> usuario = searchRepository.search(query);
 
-
-        return usuario.stream().map(e -> UsuarioResponseDTO.valueOf(e)).collect(Collectors.toList());
+        return usuario.stream().map(UsuarioResponseDTO::valueOf).collect(Collectors.toList());
     }
-    
+
 }
