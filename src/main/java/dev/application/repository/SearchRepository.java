@@ -1,14 +1,15 @@
 package dev.application.repository;
 
 import java.util.List;
-import dev.application.model.Usuario;
+
+import dev.application.model.Titulo;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class SearchRepository implements PanacheRepository<Usuario> {
+public class SearchRepository implements PanacheRepository<Titulo> {
 
-    public List<Usuario> search(String query) {
-        return list("LOWER(login) LIKE ?1", "%" + query.toLowerCase() + "%");
+    public List<Titulo> search(String query) {
+        return list("LOWER(titulo) LIKE ?1", "%" + query.toLowerCase() + "%");
     }
 }

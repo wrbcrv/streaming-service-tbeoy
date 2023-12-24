@@ -3,8 +3,8 @@ package dev.application.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dev.application.dto.UsuarioResponseDTO;
-import dev.application.model.Usuario;
+import dev.application.dto.TituloResponseDTO;
+import dev.application.model.Titulo;
 import dev.application.repository.SearchRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,10 +15,8 @@ public class SearchServiceImpl implements SearchService {
     SearchRepository searchRepository;
 
     @Override
-    public List<UsuarioResponseDTO> search(String query) {
-        List<Usuario> usuario = searchRepository.search(query);
-
-        return usuario.stream().map(UsuarioResponseDTO::valueOf).collect(Collectors.toList());
+    public List<TituloResponseDTO> search(String query) {
+        List<Titulo> usuario = searchRepository.search(query);
+        return usuario.stream().map(TituloResponseDTO::valueOf).collect(Collectors.toList());
     }
-
 }
