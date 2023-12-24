@@ -1,11 +1,15 @@
 package dev.application.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import dev.application.model.Episodio;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record TituloDTO(
+        @NotBlank(message = "URL da imagem é obrigatório")
+        String imageUrl,
         @NotBlank(message = "Titulo é obrigatório")
         String titulo,
         @NotBlank(message = "Sinopse é obrigatório")
@@ -15,5 +19,7 @@ public record TituloDTO(
         @NotNull(message = "Escolha um gênero")
         Integer generoId,
         @NotNull(message = "Escolha uma classificação indicativa")
-        Integer classificacaoId) {
+        Integer classificacaoId,
+
+        List<Episodio> episodios) {
 }

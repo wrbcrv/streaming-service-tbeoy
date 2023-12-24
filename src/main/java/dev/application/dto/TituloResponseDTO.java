@@ -1,18 +1,22 @@
 package dev.application.dto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import dev.application.model.Classificacao;
+import dev.application.model.Episodio;
 import dev.application.model.Genero;
 import dev.application.model.Titulo;
 
 public record TituloResponseDTO(
         Long id,
+        String imageUrl,
         String titulo,
         String sinopse,
         String lancamento,
         Genero genero,
-        Classificacao classificacao) {
+        Classificacao classificacao,
+        List<Episodio> episodios) {
 
     public static TituloResponseDTO valueOf(Titulo titulo) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
@@ -20,10 +24,12 @@ public record TituloResponseDTO(
 
         return new TituloResponseDTO(
                 titulo.getId(),
+                titulo.getImageUrl(),
                 titulo.getTitulo(),
                 titulo.getSinopse(),
                 lancamento,
                 titulo.getGenero(),
-                titulo.getClassificacao());
+                titulo.getClassificacao(),
+                titulo.getEpisodios());
     }
 }

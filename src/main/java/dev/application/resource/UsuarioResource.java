@@ -3,14 +3,12 @@ package dev.application.resource;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import dev.application.application.Result;
 import dev.application.dto.UsuarioDTO;
 import dev.application.dto.UsuarioResponseDTO;
 import dev.application.service.UsuarioService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -46,30 +44,16 @@ public class UsuarioResource {
     @POST
     @PermitAll
     public Response insert(UsuarioDTO usuarioDTO) {
-        try {
-            UsuarioResponseDTO usuario = usuarioService.insert(usuarioDTO);
-            return Response.ok(usuario).build();
-        } catch (ConstraintViolationException e) {
-            Result result = new Result(e.getConstraintViolations());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Status.BAD_REQUEST).entity("Erro ao inserir perfil: " + e.getMessage()).build();
-        }
+        UsuarioResponseDTO usuario = usuarioService.insert(usuarioDTO);
+        return Response.ok(usuario).build();
     }
 
     @PATCH
     @Path("/{usuarioId}")
     @RolesAllowed({ "Admin", "User" })
     public Response update(@PathParam("usuarioId") Long usuarioId, UsuarioDTO usuarioDTO) {
-        try {
-            UsuarioResponseDTO usuario = usuarioService.update(usuarioId, usuarioDTO);
-            return Response.ok(usuario).build();
-        } catch (ConstraintViolationException e) {
-            Result result = new Result(e.getConstraintViolations());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(result).build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Status.BAD_REQUEST).entity("Erro ao inserir perfil: " + e.getMessage()).build();
-        }
+        UsuarioResponseDTO usuario = usuarioService.update(usuarioId, usuarioDTO);
+        return Response.ok(usuario).build();
     }
 
     @DELETE
