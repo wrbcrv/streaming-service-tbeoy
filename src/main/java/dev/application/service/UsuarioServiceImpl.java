@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import dev.application.validation.ValidationException;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
@@ -31,8 +32,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioResponseDTO insert(@Valid UsuarioDTO usuarioDTO) throws ConstraintViolationException {
+        if (usuarioRepository.findByLogin(usuarioDTO.login()) != null)
+            throw new ValidationException("login", "O login informado já existe, insira outro");
+
         Usuario usuario = new Usuario();
 
+        usuario.setNome(usuarioDTO.nome());
+        usuario.setSobrenome(usuarioDTO.sobrenome());
         usuario.setLogin(usuarioDTO.login());
         usuario.setSenha(hashServiceImpl.getSenhaHash(usuarioDTO.senha()));
         usuario.setPerfil(Perfil.valueOf(usuarioDTO.idPerfil()));
@@ -50,6 +56,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuario == null)
             throw new NotFoundException("Usuário não encontrado");
 
+        usuario.setNome(usuarioDTO.nome());
+        usuario.setSobrenome(usuarioDTO.sobrenome());
         usuario.setLogin(usuarioDTO.login());
         usuario.setSenha(hashServiceImpl.getSenhaHash(usuarioDTO.senha()));
         usuario.setPerfil(Perfil.valueOf(usuarioDTO.idPerfil()));
@@ -66,7 +74,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponseDTO findById(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId);
-        
+
         if (usuario == null)
             throw new NotFoundException("Usuário não encontrado");
 

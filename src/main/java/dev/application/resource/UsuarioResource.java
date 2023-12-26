@@ -46,6 +46,7 @@ public class UsuarioResource {
     public Response insert(UsuarioDTO usuarioDTO) {
         UsuarioResponseDTO usuario = usuarioService.insert(usuarioDTO);
         return Response.ok(usuario).build();
+
     }
 
     @PATCH
