@@ -16,4 +16,4 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
         
         return Response.status(Response.Status.BAD_REQUEST).entity(validationError).build();
     }
-}
+}   
