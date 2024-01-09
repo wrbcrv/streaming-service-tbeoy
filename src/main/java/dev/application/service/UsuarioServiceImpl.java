@@ -11,8 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import dev.application.validation.ValidationException;
+/* import dev.application.validation.ValidationException; */
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
@@ -31,9 +30,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponseDTO insert(@Valid UsuarioDTO usuarioDTO) throws ConstraintViolationException {
-        if (usuarioRepository.findByLogin(usuarioDTO.login()) != null)
-            throw new ValidationException("login", "O login informado já existe, insira outro");
+    public UsuarioResponseDTO insert(UsuarioDTO usuarioDTO) {
+        /*
+         * if (usuarioRepository.findByLogin(usuarioDTO.login()) != null)
+         * throw new ValidationException("login",
+         * "O login informado já existe, insira outro");
+         */
 
         Usuario usuario = new Usuario();
 
@@ -50,7 +52,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponseDTO update(@Valid Long usuarioId, UsuarioDTO usuarioDTO) throws ConstraintViolationException {
+    public UsuarioResponseDTO update(Long usuarioId, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(usuarioId);
 
         if (usuario == null)
@@ -92,7 +94,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO findByLoginAndSenha(String login, String senha) {
+    public UsuarioResponseDTO findByLoginAndSenha(String login, String senha) throws ConstraintViolationException {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha);
 
         if (usuario == null)

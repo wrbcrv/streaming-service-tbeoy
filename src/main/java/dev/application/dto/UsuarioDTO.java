@@ -10,7 +10,8 @@ public record UsuarioDTO(
         String nome,
         @NotBlank(message = "Sobrenome é obrigatório")
         String sobrenome,
-        @Email(message = "Email é obrigatório")
+        @NotBlank(message = "Email é obrigatório") 
+        @Email(message = "Informe um email válido")
         String login,
         @Size(min = 8, message = "A senha deve ter pelo menos 8 caracteres")
         String senha,
