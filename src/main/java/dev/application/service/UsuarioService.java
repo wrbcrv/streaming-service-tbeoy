@@ -4,12 +4,13 @@ import java.util.List;
 
 import dev.application.dto.UsuarioDTO;
 import dev.application.dto.UsuarioResponseDTO;
+import dev.application.util.ValidationException;
 
 public interface UsuarioService {
 
     List<UsuarioResponseDTO> getAll();
 
-    UsuarioResponseDTO insert(UsuarioDTO usuarioDTO);
+    UsuarioResponseDTO insert(UsuarioDTO usuarioDTO) throws ValidationException;
 
     UsuarioResponseDTO update(Long usuarioId, UsuarioDTO usuarioDTO);
 
