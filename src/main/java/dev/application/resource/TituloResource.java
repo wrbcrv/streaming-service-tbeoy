@@ -28,6 +28,7 @@ public class TituloResource {
 
     @Inject
     TituloService tituloService;
+
     @Inject
     UsuarioService usuarioService;
 
@@ -53,8 +54,8 @@ public class TituloResource {
     @POST
     @Path("/{tituloId}/episodios")
     @RolesAllowed({ "Admin" })
-    public Response insertEpisodios(@PathParam("tituloId") Long tituloId, List<EpisodioDTO> episodioMergedDTO) {
-        TituloResponseDTO titulo = tituloService.insertEpisodios(tituloId, episodioMergedDTO);
+    public Response insertEpisodios(@PathParam("tituloId") Long tituloId, List<EpisodioDTO> episodioDTO) {
+        TituloResponseDTO titulo = tituloService.insertEpisodios(tituloId, episodioDTO);
         return Response.ok(titulo).build();
     }
 
@@ -63,7 +64,7 @@ public class TituloResource {
     @PermitAll
     public Response insertComentarios(@PathParam("tituloId") Long tituloId, @PathParam("episodioId") Long episodioId,
             ComentarioDTO comentarioDTO) {
-        TituloResponseDTO titulo = tituloService.inserirComentario(tituloId, episodioId, comentarioDTO);
+        TituloResponseDTO titulo = tituloService.insertComentario(tituloId, episodioId, comentarioDTO);
         return Response.ok(titulo).build();
     }
 }

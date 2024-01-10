@@ -17,8 +17,6 @@ import dev.application.repository.TituloRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
@@ -42,7 +40,7 @@ public class TituloServiceImpl implements TituloService {
 
     @Override
     @Transactional
-    public TituloResponseDTO insert(@Valid TituloDTO tituloDTO) throws ConstraintViolationException {
+    public TituloResponseDTO insert(TituloDTO tituloDTO) {
         Titulo titulo = new Titulo();
 
         titulo.setImageUrl(tituloDTO.imageUrl());
@@ -59,8 +57,7 @@ public class TituloServiceImpl implements TituloService {
 
     @Override
     @Transactional
-    public TituloResponseDTO insertEpisodios(@Valid Long tituloId, List<EpisodioDTO> episodioMergedDTO)
-            throws ConstraintViolationException {
+    public TituloResponseDTO insertEpisodios(Long tituloId, List<EpisodioDTO> episodioDTO) {
         Titulo existingTitulo = tituloRepository.findById(tituloId);
 
         if (existingTitulo == null)
@@ -68,7 +65,7 @@ public class TituloServiceImpl implements TituloService {
 
         List<Episodio> episodios = existingTitulo.getEpisodios();
 
-        for (EpisodioDTO episodio : episodioMergedDTO) {
+        for (EpisodioDTO episodio : episodioDTO) {
             Episodio newEpisodio = new Episodio();
 
             newEpisodio.setTitulo(episodio.titulo());
@@ -84,8 +81,8 @@ public class TituloServiceImpl implements TituloService {
 
     @Override
     @Transactional
-    public TituloResponseDTO inserirComentario(@Valid Long tituloId, Long episodioId,
-            ComentarioDTO comentarioDTO) throws ConstraintViolationException {
+    public TituloResponseDTO insertComentario(Long tituloId, Long episodioId,
+            ComentarioDTO comentarioDTO) {
         Titulo titulo = tituloRepository.findById(tituloId);
 
         Episodio episodio = episodioRepository.findById(episodioId);

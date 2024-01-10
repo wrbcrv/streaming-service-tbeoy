@@ -7,6 +7,9 @@ import dev.application.dto.UsuarioDTO;
 import dev.application.dto.UsuarioResponseDTO;
 import dev.application.model.Perfil;
 import dev.application.service.UsuarioService;
+import dev.application.service.ValidationService;
+import dev.application.util.ValidationError;
+import dev.application.util.ValidationException;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -30,6 +33,9 @@ public class UsuarioResource {
     @Inject
     UsuarioService usuarioService;
 
+    @Inject
+    ValidationService validationService;
+
     @GET
     @RolesAllowed({ "Admin" })
     public Response getAll() {
@@ -45,17 +51,34 @@ public class UsuarioResource {
     @POST
     @PermitAll
     public Response insert(UsuarioDTO usuarioDTO) {
-        UsuarioResponseDTO usuario = usuarioService.insert(usuarioDTO);
-        return Response.ok(usuario).build();
+        try {
+            List<ValidationError> validationErrors = validationService.validate(usuarioDTO);
 
+            if (!validationErrors.isEmpty())
+                throw new ValidationException(validationErrors);
+
+            UsuarioResponseDTO usuario = usuarioService.insert(usuarioDTO);
+            return Response.ok(usuario).build();
+        } catch (ValidationException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
+        }
     }
 
     @PATCH
     @Path("/{usuarioId}")
     @RolesAllowed({ "Admin", "User" })
     public Response update(@PathParam("usuarioId") Long usuarioId, UsuarioDTO usuarioDTO) {
-        UsuarioResponseDTO usuario = usuarioService.update(usuarioId, usuarioDTO);
-        return Response.ok(usuario).build();
+        try {
+            List<ValidationError> validationErrors = validationService.validate(usuarioDTO);
+
+            if (!validationErrors.isEmpty())
+                throw new ValidationException(validationErrors);
+
+            UsuarioResponseDTO usuario = usuarioService.update(usuarioId, usuarioDTO);
+            return Response.ok(usuario).build();
+        } catch (ValidationException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
+        }
     }
 
     @DELETE
