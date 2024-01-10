@@ -2,13 +2,17 @@ package dev.application.service;
 
 import java.util.List;
 
-import dev.application.dto.EpisodioMergedDTO;
+import dev.application.dto.ComentarioDTO;
+import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
 import dev.application.model.Classificacao;
+import dev.application.model.Comentario;
 import dev.application.model.Episodio;
 import dev.application.model.Genero;
 import dev.application.model.Titulo;
+import dev.application.repository.ComentarioRepository;
+import dev.application.repository.EpisodioRepository;
 import dev.application.repository.TituloRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,6 +26,12 @@ public class TituloServiceImpl implements TituloService {
 
     @Inject
     TituloRepository tituloRepository;
+
+    @Inject
+    EpisodioRepository episodioRepository;
+
+    @Inject
+    ComentarioRepository comentarioRepository;
 
     @Override
     public List<TituloResponseDTO> listAll() {
@@ -49,7 +59,7 @@ public class TituloServiceImpl implements TituloService {
 
     @Override
     @Transactional
-    public TituloResponseDTO insertEpisodios(@Valid Long tituloId, List<EpisodioMergedDTO> episodioMergedDTO)
+    public TituloResponseDTO insertEpisodios(@Valid Long tituloId, List<EpisodioDTO> episodioMergedDTO)
             throws ConstraintViolationException {
         Titulo existingTitulo = tituloRepository.findById(tituloId);
 
@@ -58,7 +68,7 @@ public class TituloServiceImpl implements TituloService {
 
         List<Episodio> episodios = existingTitulo.getEpisodios();
 
-        for (EpisodioMergedDTO episodio : episodioMergedDTO) {
+        for (EpisodioDTO episodio : episodioMergedDTO) {
             Episodio newEpisodio = new Episodio();
 
             newEpisodio.setTitulo(episodio.titulo());
@@ -70,5 +80,26 @@ public class TituloServiceImpl implements TituloService {
         tituloRepository.persist(existingTitulo);
 
         return TituloResponseDTO.valueOf(existingTitulo);
+    }
+
+    @Override
+    @Transactional
+    public TituloResponseDTO inserirComentario(@Valid Long tituloId, Long episodioId,
+            ComentarioDTO comentarioDTO) throws ConstraintViolationException {
+        Titulo titulo = tituloRepository.findById(tituloId);
+
+        Episodio episodio = episodioRepository.findById(episodioId);
+
+        if (titulo == null || episodio == null)
+            throw new NotFoundException("Título ou episódio não encontrados");
+
+        Comentario comentario = new Comentario();
+        comentario.setComentario(comentarioDTO.comentario());
+        comentario.setLikes(comentarioDTO.likes());
+        episodio.getComentarios().add(comentario);
+
+        tituloRepository.persist(titulo);
+
+        return TituloResponseDTO.valueOf(titulo);
     }
 }

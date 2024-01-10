@@ -2,10 +2,12 @@ package dev.application.resource;
 
 import java.util.List;
 
-import dev.application.dto.EpisodioMergedDTO;
+import dev.application.dto.ComentarioDTO;
+import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
 import dev.application.service.TituloService;
+import dev.application.service.UsuarioService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -26,6 +28,8 @@ public class TituloResource {
 
     @Inject
     TituloService tituloService;
+    @Inject
+    UsuarioService usuarioService;
 
     @GET
     @PermitAll
@@ -49,8 +53,17 @@ public class TituloResource {
     @POST
     @Path("/{tituloId}/episodios")
     @RolesAllowed({ "Admin" })
-    public Response insertEpisodios(@PathParam("tituloId") Long tituloId, List<EpisodioMergedDTO> episodioMergedDTO) {
+    public Response insertEpisodios(@PathParam("tituloId") Long tituloId, List<EpisodioDTO> episodioMergedDTO) {
         TituloResponseDTO titulo = tituloService.insertEpisodios(tituloId, episodioMergedDTO);
+        return Response.ok(titulo).build();
+    }
+
+    @POST
+    @Path("/{tituloId}/episodios/{episodioId}")
+    @PermitAll
+    public Response insertComentarios(@PathParam("tituloId") Long tituloId, @PathParam("episodioId") Long episodioId,
+            ComentarioDTO comentarioDTO) {
+        TituloResponseDTO titulo = tituloService.inserirComentario(tituloId, episodioId, comentarioDTO);
         return Response.ok(titulo).build();
     }
 }

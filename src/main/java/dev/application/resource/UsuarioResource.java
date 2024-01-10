@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import dev.application.dto.UsuarioDTO;
 import dev.application.dto.UsuarioResponseDTO;
+import dev.application.model.Perfil;
 import dev.application.service.UsuarioService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -85,5 +86,12 @@ public class UsuarioResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao buscar usuário por ID: " + e.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("/perfis")
+    @PermitAll
+    public Response getPerfis() {
+        return Response.ok(Perfil.values()).build();
     }
 }

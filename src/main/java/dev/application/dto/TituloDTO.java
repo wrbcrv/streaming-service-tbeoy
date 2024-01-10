@@ -3,7 +3,6 @@ package dev.application.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import dev.application.model.Episodio;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,5 +20,5 @@ public record TituloDTO(
         @NotNull(message = "Escolha uma classificação indicativa")
         Integer classificacaoId,
 
-        List<Episodio> episodios) {
+        List<EpisodioDTO> episodios) {
 }
