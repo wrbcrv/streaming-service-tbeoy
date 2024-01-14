@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/logged")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class LoggedInUserResource {
+public class LoggedInUsuarioResource {
 
     @Inject
     JsonWebToken jsonWebToken;
@@ -26,11 +26,15 @@ public class LoggedInUserResource {
 
     @GET
     @RolesAllowed({ "Admin", "User" })
-    public Response getUsuario() {
-        String login = jsonWebToken.getSubject();
+    public Response getLoggedInUsuario() {
+        try {
+            String login = jsonWebToken.getSubject();
 
-        UsuarioResponseDTO usuarioResponseDTO = usuarioService.findByLogin(login);
+            UsuarioResponseDTO usuarioResponseDTO = usuarioService.findByLogin(login);
 
-        return Response.ok(usuarioResponseDTO).build();
+            return Response.ok(usuarioResponseDTO).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 }
