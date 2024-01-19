@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class Comentario extends DefaultEntity {
-    
+
     private String comentario;
     private int likes;
 

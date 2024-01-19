@@ -12,13 +12,13 @@ public record EpisodioDTO(
     @NotBlank(message = "URL do vídeo é obrigatório") 
     String videoUrl,
 
-    List<ComentarioDTO> comentarios) {
+    List<ComentarioResponseDTO> comentarios) {
 
     public static EpisodioDTO valueOf(Episodio episodio) {
-        List<ComentarioDTO> comentarios = null;
+        List<ComentarioResponseDTO> comentarios = null;
         
         if (episodio.getComentarios() != null && !episodio.getComentarios().isEmpty())
-            comentarios = episodio.getComentarios().stream().map(e -> ComentarioDTO.valueOf(e)).toList();
+            comentarios = episodio.getComentarios().stream().map(e -> ComentarioResponseDTO.valueOf(e)).toList();
 
         return new EpisodioDTO(episodio.getId(), episodio.getTitulo(), episodio.getVideoUrl(), comentarios);
     }

@@ -102,7 +102,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha);
 
         if (usuario == null)
-            throw new NotFoundException("Usuário não encontrado");
+            throw new NotFoundException(
+                    "Por favor, verifique as informações fornecidas e tente novamente.");
 
         return UsuarioResponseDTO.valueOf(usuario);
     }

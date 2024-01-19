@@ -2,8 +2,6 @@ package dev.application.resource;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import dev.application.dto.LoginDTO;
 import dev.application.dto.UsuarioResponseDTO;
 import dev.application.service.HashService;
@@ -14,6 +12,7 @@ import dev.application.util.ValidationError;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -45,7 +44,7 @@ public class LoginResource {
     ValidationService validationService;
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
     public Response login(LoginDTO loginDTO) {
         try {
@@ -53,10 +52,7 @@ public class LoginResource {
 
             if (!validationErrors.isEmpty()) {
                 try {
-                    ObjectMapper objectMapper = new ObjectMapper();
-
-                    String jsonErrors = objectMapper.writeValueAsString(validationErrors);
-                    return Response.status(Status.BAD_REQUEST).entity(jsonErrors).build();
+                    return Response.status(Status.BAD_REQUEST).entity(validationErrors).build();
                 } catch (Exception e) {
                     return Response.status(Status.INTERNAL_SERVER_ERROR)
                             .entity("Erro durante tentativa de login").build();
@@ -67,15 +63,13 @@ public class LoginResource {
 
             UsuarioResponseDTO usuario = usuarioService.findByLoginAndSenha(loginDTO.login(), hash);
 
-            if (usuario == null)
-                return Response.status(Status.NOT_FOUND).entity("User not found.").build();
-
             String token = jwtService.generateJwt(usuario);
 
             NewCookie cookie = new NewCookie.Builder("token")
                     .value(token)
                     .domain(null)
                     .path("/")
+                    .maxAge(86400)
                     .httpOnly(true)
                     .secure(true)
                     .sameSite(SameSite.NONE)
@@ -90,8 +84,9 @@ public class LoginResource {
 
     @GET
     @Path("get-token")
+    @Produces(MediaType.TEXT_PLAIN)
     @PermitAll
-    public Response getCookieValue(@Context HttpHeaders httpHeaders) {
+    public Response getTokenFromCookieValue(@Context HttpHeaders httpHeaders) {
         try {
             Cookie cookie = httpHeaders.getCookies().get("token");
 
@@ -101,6 +96,26 @@ public class LoginResource {
             }
 
             return Response.status(Status.NOT_FOUND).entity("Valor não encontrado").build();
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()).build();
+        }
+    }
+
+    @DELETE
+    @Path("logout")
+    @PermitAll
+    public Response logout(@Context HttpHeaders httpHeaders) {
+        try {
+            Cookie cookie = httpHeaders.getCookies().get("token");
+
+            if (cookie != null) {
+                NewCookie expiredCookie = new NewCookie.Builder(cookie).value("").path("/").build();
+
+                return Response.ok().header(HttpHeaders.SET_COOKIE, expiredCookie).build();
+            }
+
+            return Response.status(Status.NOT_FOUND).entity("Cookie não encontrado").build();
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage()).build();
