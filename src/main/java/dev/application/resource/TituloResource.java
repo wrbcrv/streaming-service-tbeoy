@@ -8,6 +8,9 @@ import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
 import dev.application.service.TituloService;
 import dev.application.service.UsuarioService;
+import dev.application.service.ValidationService;
+import dev.application.util.ValidationError;
+import dev.application.util.ValidationException;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -32,6 +35,9 @@ public class TituloResource {
     @Inject
     UsuarioService usuarioService;
 
+    @Inject
+    ValidationService validationService;
+
     @GET
     @PermitAll
     public Response listAll() {
@@ -47,24 +53,42 @@ public class TituloResource {
     @POST
     @RolesAllowed({ "Admin" })
     public Response insert(TituloDTO tituloDTO) {
-        TituloResponseDTO titulo = tituloService.insert(tituloDTO);
-        return Response.ok(titulo).build();
+        try {
+            TituloResponseDTO titulo = tituloService.insert(tituloDTO);
+            return Response.ok(titulo).build();
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 
     @POST
     @Path("/{tituloId}/episodios")
     @RolesAllowed({ "Admin" })
     public Response insertEpisodios(@PathParam("tituloId") Long tituloId, List<EpisodioDTO> episodioDTO) {
-        TituloResponseDTO titulo = tituloService.insertEpisodios(tituloId, episodioDTO);
-        return Response.ok(titulo).build();
+        try {
+            TituloResponseDTO titulo = tituloService.insertEpisodios(tituloId, episodioDTO);
+            return Response.ok(titulo).build();
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 
     @POST
     @Path("/{tituloId}/episodios/{episodioId}")
-    @PermitAll
+    @RolesAllowed({ "Admin", "User" })
     public Response insertComentarios(@PathParam("tituloId") Long tituloId, @PathParam("episodioId") Long episodioId,
             ComentarioDTO comentarioDTO) {
-        TituloResponseDTO titulo = tituloService.insertComentario(tituloId, episodioId, comentarioDTO);
-        return Response.ok(titulo).build();
+        try {
+            List<ValidationError> validationErrors = validationService.validate(comentarioDTO);
+
+            if (!validationErrors.isEmpty()) {
+                throw new dev.application.util.ValidationException(validationErrors);
+            }
+
+            TituloResponseDTO titulo = tituloService.insertComentario(tituloId, episodioId, comentarioDTO);
+            return Response.ok(titulo).build();
+        } catch (ValidationException e) {
+            return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
+        }
     }
 }

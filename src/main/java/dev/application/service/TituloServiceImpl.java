@@ -1,5 +1,6 @@
 package dev.application.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import dev.application.dto.ComentarioDTO;
@@ -91,8 +92,10 @@ public class TituloServiceImpl implements TituloService {
             throw new NotFoundException("Título ou episódio não encontrados");
 
         Comentario comentario = new Comentario();
-        comentario.setComentario(comentarioDTO.comentario());
+        comentario.setConteudo(comentarioDTO.conteudo());
         comentario.setLikes(comentarioDTO.likes());
+        comentario.setData(LocalDateTime.now());
+
         episodio.getComentarios().add(comentario);
 
         tituloRepository.persist(titulo);

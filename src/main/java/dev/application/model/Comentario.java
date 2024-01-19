@@ -1,12 +1,17 @@
 package dev.application.model;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 public class Comentario extends DefaultEntity {
 
-    private String comentario;
+    @Column(length = 1000)
+    private String conteudo;
     private int likes;
+    private LocalDateTime data;
 
     public int getLikes() {
         return likes;
@@ -16,11 +21,19 @@ public class Comentario extends DefaultEntity {
         this.likes = likes;
     }
 
-    public String getComentario() {
-        return comentario;
+    public String getConteudo() {
+        return conteudo;
     }
 
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+    }
+
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public void setData(LocalDateTime data) {
+        this.data = data;
     }
 }
