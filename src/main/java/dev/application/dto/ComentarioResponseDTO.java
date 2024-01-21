@@ -7,6 +7,7 @@ import dev.application.model.Comentario;
 
 public record ComentarioResponseDTO(
                 Long id,
+                UsuarioResponseDTO usuario,
                 String conteudo,
                 int likes,
                 String data) {
@@ -19,8 +20,10 @@ public record ComentarioResponseDTO(
 
                 return new ComentarioResponseDTO(
                                 comentario.getId(),
+                                UsuarioResponseDTO.valueOf(comentario.getUsuario()),
                                 comentario.getConteudo(),
                                 comentario.getLikes(),
                                 formattedData);
         }
 }
+        

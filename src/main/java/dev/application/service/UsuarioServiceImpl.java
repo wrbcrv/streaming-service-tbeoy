@@ -102,8 +102,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha);
 
         if (usuario == null)
-            throw new NotFoundException(
-                    "Por favor, verifique as informações fornecidas e tente novamente.");
+            throw new NotFoundException("E-mail ou senha incorretos, verifique as informações.");
 
         return UsuarioResponseDTO.valueOf(usuario);
     }

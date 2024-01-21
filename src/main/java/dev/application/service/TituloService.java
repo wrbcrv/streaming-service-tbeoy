@@ -15,5 +15,5 @@ public interface TituloService {
 
     TituloResponseDTO insertEpisodios(Long tituloId, List<EpisodioDTO> episodioDTO);
 
-    TituloResponseDTO insertComentario(Long tituloId, Long episodioId, ComentarioDTO comentarioDTO);
+    TituloResponseDTO insertComentario(Long tituloId, Long episodioId, String login, ComentarioDTO comentarioDTO);
 }

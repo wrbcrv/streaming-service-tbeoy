@@ -15,6 +15,7 @@ import dev.application.model.Titulo;
 import dev.application.repository.ComentarioRepository;
 import dev.application.repository.EpisodioRepository;
 import dev.application.repository.TituloRepository;
+import dev.application.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -31,6 +32,9 @@ public class TituloServiceImpl implements TituloService {
 
     @Inject
     ComentarioRepository comentarioRepository;
+
+    @Inject
+    UsuarioRepository usuarioRepository;
 
     @Override
     public List<TituloResponseDTO> listAll() {
@@ -82,7 +86,7 @@ public class TituloServiceImpl implements TituloService {
 
     @Override
     @Transactional
-    public TituloResponseDTO insertComentario(Long tituloId, Long episodioId,
+    public TituloResponseDTO insertComentario(Long tituloId, Long episodioId, String login,
             ComentarioDTO comentarioDTO) {
         Titulo titulo = tituloRepository.findById(tituloId);
 
@@ -92,6 +96,7 @@ public class TituloServiceImpl implements TituloService {
             throw new NotFoundException("Título ou episódio não encontrados");
 
         Comentario comentario = new Comentario();
+        comentario.setUsuario(usuarioRepository.findByLogin(login));
         comentario.setConteudo(comentarioDTO.conteudo());
         comentario.setLikes(comentarioDTO.likes());
         comentario.setData(LocalDateTime.now());

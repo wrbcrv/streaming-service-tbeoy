@@ -34,16 +34,6 @@ VALUES
     ('Placeholder Episode', '');
 
 INSERT INTO
-    comentario (comentario, likes)
-VALUES
-    ('Placeholder Comment', 0);
-
-INSERT INTO
     titulo_episodio (titulo_id, episodio_id)
-VALUES
-    (1, 1);
-
-INSERT INTO
-    episodio_comentario (episodio_id, comentario_id)
 VALUES
     (1, 1);

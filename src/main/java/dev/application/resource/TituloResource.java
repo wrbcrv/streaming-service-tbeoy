@@ -2,6 +2,8 @@ package dev.application.resource;
 
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 import dev.application.dto.ComentarioDTO;
 import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
@@ -37,6 +39,9 @@ public class TituloResource {
 
     @Inject
     ValidationService validationService;
+
+    @Inject
+    JsonWebToken jsonWebToken;
 
     @GET
     @PermitAll
@@ -85,7 +90,9 @@ public class TituloResource {
                 throw new dev.application.util.ValidationException(validationErrors);
             }
 
-            TituloResponseDTO titulo = tituloService.insertComentario(tituloId, episodioId, comentarioDTO);
+            String login = jsonWebToken.getSubject();
+
+            TituloResponseDTO titulo = tituloService.insertComentario(tituloId, episodioId, login, comentarioDTO);
             return Response.ok(titulo).build();
         } catch (ValidationException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
