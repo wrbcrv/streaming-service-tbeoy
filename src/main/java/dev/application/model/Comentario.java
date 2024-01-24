@@ -15,7 +15,7 @@ public class Comentario extends DefaultEntity {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-    private int likes;
+    private Integer likes;
     private LocalDateTime data;
 
     public String getConteudo() {
@@ -34,11 +34,11 @@ public class Comentario extends DefaultEntity {
         this.conteudo = conteudo;
     }
 
-    public int getLikes() {
+    public Integer getLikes() {
         return likes;
     }
 
-    public void setLikes(int likes) {
+    public void setLikes(Integer likes) {
         this.likes = likes;
     }
 

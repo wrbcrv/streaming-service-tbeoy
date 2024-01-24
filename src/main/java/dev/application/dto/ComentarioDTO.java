@@ -7,6 +7,6 @@ import jakarta.validation.constraints.Size;
 public record ComentarioDTO(
         @Size(max = 1000, message = "Limite máximo de caracteres atingido")
         String conteudo,
-        int likes,
+        Integer likes,
         LocalDateTime data) {
 }

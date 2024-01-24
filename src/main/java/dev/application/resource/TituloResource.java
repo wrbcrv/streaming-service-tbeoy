@@ -79,7 +79,7 @@ public class TituloResource {
     }
 
     @POST
-    @Path("/{tituloId}/episodios/{episodioId}")
+    @Path("/{tituloId}/episodios/{episodioId}/comentario")
     @RolesAllowed({ "Admin", "User" })
     public Response insertComentarios(@PathParam("tituloId") Long tituloId, @PathParam("episodioId") Long episodioId,
             ComentarioDTO comentarioDTO) {

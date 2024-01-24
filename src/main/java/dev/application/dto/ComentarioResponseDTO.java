@@ -9,7 +9,7 @@ public record ComentarioResponseDTO(
                 Long id,
                 UsuarioResponseDTO usuario,
                 String conteudo,
-                int likes,
+                Integer likes,
                 String data) {
 
         public static ComentarioResponseDTO valueOf(Comentario comentario) {
