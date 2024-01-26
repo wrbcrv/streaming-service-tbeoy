@@ -98,4 +98,20 @@ public class TituloResource {
             return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
         }
     }
+
+    @POST
+    @Path("/{tituloId}/episodios/{episodioId}/comentarios/{comentarioId}/like")
+    @RolesAllowed({ "Admin", "User" })
+    public Response likeComentario(
+            @PathParam("tituloId") Long tituloId,
+            @PathParam("episodioId") Long episodioId,
+            @PathParam("comentarioId") Long comentarioId) {
+        try {
+            String login = jsonWebToken.getSubject();
+            TituloResponseDTO titulo = tituloService.likeComentario(tituloId, episodioId, login, comentarioId);
+            return Response.ok(titulo).build();
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
 }

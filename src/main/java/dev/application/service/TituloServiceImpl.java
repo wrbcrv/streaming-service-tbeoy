@@ -1,7 +1,9 @@
 package dev.application.service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dev.application.dto.ComentarioDTO;
 import dev.application.dto.EpisodioDTO;
@@ -11,9 +13,11 @@ import dev.application.model.Classificacao;
 import dev.application.model.Comentario;
 import dev.application.model.Episodio;
 import dev.application.model.Genero;
+import dev.application.model.Likes;
 import dev.application.model.Titulo;
 import dev.application.repository.ComentarioRepository;
 import dev.application.repository.EpisodioRepository;
+import dev.application.repository.LikesRepository;
 import dev.application.repository.TituloRepository;
 import dev.application.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,6 +39,9 @@ public class TituloServiceImpl implements TituloService {
 
     @Inject
     UsuarioRepository usuarioRepository;
+
+    @Inject
+    LikesRepository likeRepository;
 
     @Override
     public List<TituloResponseDTO> listAll() {
@@ -106,5 +113,54 @@ public class TituloServiceImpl implements TituloService {
         tituloRepository.persist(titulo);
 
         return TituloResponseDTO.valueOf(titulo);
+    }
+
+    @Override
+    @Transactional
+    public TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId) {
+        Titulo titulo = tituloRepository.findById(tituloId);
+        Episodio episodio = episodioRepository.findById(episodioId);
+        if (titulo == null || episodio == null) {
+            throw new NotFoundException("Título ou episódio não encontrados");
+        }
+
+        Comentario comentario = findComentario(episodio, comentarioId);
+        if (comentario == null) {
+            throw new NotFoundException("Comentário não encontrado");
+        }
+
+        Likes usuarioLikes = likeRepository.findByLogin(login)
+                .orElseGet(() -> {
+                    Likes newUsuarioLikes = new Likes();
+                    newUsuarioLikes.setLogin(login);
+                    return newUsuarioLikes;
+                });
+
+        Set<Long> likedComentarios = usuarioLikes.getLikedComentarios();
+        if (likedComentarios == null) {
+            likedComentarios = new HashSet<>();
+            usuarioLikes.setLikedComentarios(likedComentarios);
+        }
+
+        boolean alreadyLiked = likedComentarios.contains(comentarioId);
+        comentario.setLikes(comentario.getLikes() + (alreadyLiked ? -1 : 1));
+
+        if (alreadyLiked) {
+            likedComentarios.remove(comentarioId);
+        } else {
+            likedComentarios.add(comentarioId);
+        }
+
+        likeRepository.persist(usuarioLikes);
+        tituloRepository.persist(titulo);
+
+        return TituloResponseDTO.valueOf(titulo);
+    }
+
+    private Comentario findComentario(Episodio episodio, Long comentarioId) {
+        return episodio.getComentarios().stream()
+                .filter(comentario -> comentario.getId().equals(comentarioId))
+                .findFirst()
+                .orElse(null);
     }
 }
