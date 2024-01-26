@@ -41,7 +41,7 @@ public class TituloServiceImpl implements TituloService {
     UsuarioRepository usuarioRepository;
 
     @Inject
-    LikesRepository likeRepository;
+    LikesRepository likesRepository;
 
     @Override
     public List<TituloResponseDTO> listAll() {
@@ -129,7 +129,7 @@ public class TituloServiceImpl implements TituloService {
             throw new NotFoundException("Comentário não encontrado");
         }
 
-        Likes usuarioLikes = likeRepository.findByLogin(login)
+        Likes usuarioLikes = likesRepository.findByLogin(login)
                 .orElseGet(() -> {
                     Likes newUsuarioLikes = new Likes();
                     newUsuarioLikes.setLogin(login);
@@ -151,7 +151,7 @@ public class TituloServiceImpl implements TituloService {
             likedComentarios.add(comentarioId);
         }
 
-        likeRepository.persist(usuarioLikes);
+        likesRepository.persist(usuarioLikes);
         tituloRepository.persist(titulo);
 
         return TituloResponseDTO.valueOf(titulo);
@@ -162,5 +162,23 @@ public class TituloServiceImpl implements TituloService {
                 .filter(comentario -> comentario.getId().equals(comentarioId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public boolean hasUsuarioLikedComentario(String login, Long comentarioId) {
+        Comentario comentario = comentarioRepository.findById(comentarioId);
+
+        if (comentario == null) 
+            throw new NotFoundException("Comentário não encontrado");
+            
+        Likes usuarioLikes = likesRepository.findByLogin(login)
+                .orElseGet(() -> {
+                    Likes newUsuarioLikes = new Likes();
+                    newUsuarioLikes.setLogin(login);
+                    return newUsuarioLikes;
+                });
+    
+        Set<Long> likedComentarios = usuarioLikes.getLikedComentarios();
+        return likedComentarios != null && likedComentarios.contains(comentarioId);
     }
 }

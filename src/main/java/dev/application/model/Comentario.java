@@ -22,16 +22,16 @@ public class Comentario extends DefaultEntity {
         return conteudo;
     }
 
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
     }
 
     public Integer getLikes() {

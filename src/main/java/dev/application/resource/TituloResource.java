@@ -18,6 +18,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -110,6 +111,26 @@ public class TituloResource {
             String login = jsonWebToken.getSubject();
             TituloResponseDTO titulo = tituloService.likeComentario(tituloId, episodioId, login, comentarioId);
             return Response.ok(titulo).build();
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/{tituloId}/episodios/{episodioId}/comentarios/{comentarioId}/isliked")
+    @RolesAllowed({ "Admin", "User" })
+    public Response isComentarioLiked(
+            @PathParam("tituloId") Long tituloId,
+            @PathParam("episodioId") Long episodioId,
+            @PathParam("comentarioId") Long comentarioId) {
+        try {
+            String login = jsonWebToken.getSubject();
+
+            boolean isLiked = tituloService.hasUsuarioLikedComentario(login, comentarioId);
+
+            return Response.ok(isLiked).build();
+        } catch (NotFoundException e) {
+            return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }

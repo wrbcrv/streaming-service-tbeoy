@@ -18,4 +18,6 @@ public interface TituloService {
     TituloResponseDTO insertComentario(Long tituloId, Long episodioId, String login, ComentarioDTO comentarioDTO);
 
     TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId);
+
+    public boolean hasUsuarioLikedComentario(String login, Long comentarioId);
 }

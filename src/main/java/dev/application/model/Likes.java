@@ -19,7 +19,7 @@ public class Likes extends DefaultEntity {
     @ElementCollection
     @CollectionTable(name = "liked_comentarios", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "comentario_id")
-    private Set<Long> likedComentarios;
+    private Set<Long> likedComentarios; 
 
     public String getLogin() {
         return login;
