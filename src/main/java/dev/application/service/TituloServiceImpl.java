@@ -119,15 +119,16 @@ public class TituloServiceImpl implements TituloService {
     @Transactional
     public TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId) {
         Titulo titulo = tituloRepository.findById(tituloId);
+
         Episodio episodio = episodioRepository.findById(episodioId);
-        if (titulo == null || episodio == null) {
+
+        if (titulo == null || episodio == null)
             throw new NotFoundException("Título ou episódio não encontrados");
-        }
 
         Comentario comentario = findComentario(episodio, comentarioId);
-        if (comentario == null) {
+
+        if (comentario == null)
             throw new NotFoundException("Comentário não encontrado");
-        }
 
         Likes usuarioLikes = likesRepository.findByLogin(login)
                 .orElseGet(() -> {
@@ -137,6 +138,7 @@ public class TituloServiceImpl implements TituloService {
                 });
 
         Set<Long> likedComentarios = usuarioLikes.getLikedComentarios();
+
         if (likedComentarios == null) {
             likedComentarios = new HashSet<>();
             usuarioLikes.setLikedComentarios(likedComentarios);
@@ -145,11 +147,10 @@ public class TituloServiceImpl implements TituloService {
         boolean alreadyLiked = likedComentarios.contains(comentarioId);
         comentario.setLikes(comentario.getLikes() + (alreadyLiked ? -1 : 1));
 
-        if (alreadyLiked) {
+        if (alreadyLiked)
             likedComentarios.remove(comentarioId);
-        } else {
+        else
             likedComentarios.add(comentarioId);
-        }
 
         likesRepository.persist(usuarioLikes);
         tituloRepository.persist(titulo);
@@ -168,17 +169,18 @@ public class TituloServiceImpl implements TituloService {
     public boolean hasUsuarioLikedComentario(String login, Long comentarioId) {
         Comentario comentario = comentarioRepository.findById(comentarioId);
 
-        if (comentario == null) 
+        if (comentario == null)
             throw new NotFoundException("Comentário não encontrado");
-            
+
         Likes usuarioLikes = likesRepository.findByLogin(login)
                 .orElseGet(() -> {
                     Likes newUsuarioLikes = new Likes();
                     newUsuarioLikes.setLogin(login);
                     return newUsuarioLikes;
                 });
-    
+
         Set<Long> likedComentarios = usuarioLikes.getLikedComentarios();
+
         return likedComentarios != null && likedComentarios.contains(comentarioId);
     }
 }

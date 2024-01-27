@@ -19,5 +19,5 @@ public interface TituloService {
 
     TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId);
 
-    public boolean hasUsuarioLikedComentario(String login, Long comentarioId);
+    boolean hasUsuarioLikedComentario(String login, Long comentarioId);
 }
