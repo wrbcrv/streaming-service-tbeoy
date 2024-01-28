@@ -17,6 +17,8 @@ public interface TituloService {
 
     TituloResponseDTO insertComentario(Long tituloId, Long episodioId, String login, ComentarioDTO comentarioDTO);
 
+    TituloResponseDTO deleteComentario(Long tituloId, Long episodioId, Long comentarioId, String login);
+
     TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId);
 
     boolean hasUsuarioLikedComentario(String login, Long comentarioId);

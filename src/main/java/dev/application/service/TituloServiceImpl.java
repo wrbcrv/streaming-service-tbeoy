@@ -20,6 +20,7 @@ import dev.application.repository.EpisodioRepository;
 import dev.application.repository.LikesRepository;
 import dev.application.repository.TituloRepository;
 import dev.application.repository.UsuarioRepository;
+import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -109,6 +110,30 @@ public class TituloServiceImpl implements TituloService {
         comentario.setData(LocalDateTime.now());
 
         episodio.getComentarios().add(comentario);
+
+        tituloRepository.persist(titulo);
+
+        return TituloResponseDTO.valueOf(titulo);
+    }
+
+    @Override
+    @Transactional
+    public TituloResponseDTO deleteComentario(Long tituloId, Long episodioId, Long comentarioId, String login) {
+        Titulo titulo = tituloRepository.findById(tituloId);
+        Episodio episodio = episodioRepository.findById(episodioId);
+
+        if (titulo == null || episodio == null)
+            throw new NotFoundException("Título ou episódio não encontrados");
+
+        Comentario comentario = comentarioRepository.findById(comentarioId);
+
+        if (comentario == null)
+            throw new NotFoundException("Comentário não encontrado");
+
+        if (!comentario.getUsuario().getLogin().equals(login))
+            throw new UnauthorizedException("Você não tem permissão para excluir este comentário");
+
+        episodio.getComentarios().remove(comentario);
 
         tituloRepository.persist(titulo);
 

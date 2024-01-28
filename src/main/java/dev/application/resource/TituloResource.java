@@ -13,10 +13,12 @@ import dev.application.service.UsuarioService;
 import dev.application.service.ValidationService;
 import dev.application.util.ValidationError;
 import dev.application.util.ValidationException;
+import io.quarkus.security.UnauthorizedException;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
@@ -97,6 +99,23 @@ public class TituloResource {
             return Response.ok(titulo).build();
         } catch (ValidationException e) {
             return Response.status(Status.BAD_REQUEST).entity(e.getValidationErrors()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/{tituloId}/episodios/{episodioId}/comentarios/{comentarioId}/delete")
+    @RolesAllowed({ "Admin", "User" })
+    public Response deleteComentario(@PathParam("tituloId") Long tituloId,
+            @PathParam("episodioId") Long episodioId,
+            @PathParam("comentarioId") Long comentarioId) {
+        try {
+            String login = jsonWebToken.getSubject();
+            TituloResponseDTO titulo = tituloService.deleteComentario(tituloId, episodioId, comentarioId, login);
+            return Response.ok(titulo).entity("Comentário deletado.").build();
+        } catch (NotFoundException e) {
+            return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (UnauthorizedException e) {
+            return Response.status(Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
     }
 
