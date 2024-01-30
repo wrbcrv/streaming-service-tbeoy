@@ -3,6 +3,7 @@ package dev.application.service;
 import java.util.List;
 
 import dev.application.dto.ComentarioDTO;
+import dev.application.dto.ComentarioResponseDTO;
 import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
@@ -18,6 +19,8 @@ public interface TituloService {
     TituloResponseDTO insertComentario(Long tituloId, Long episodioId, String login, ComentarioDTO comentarioDTO);
 
     TituloResponseDTO deleteComentario(Long tituloId, Long episodioId, Long comentarioId, String login);
+
+    List<ComentarioResponseDTO> getComentarios(Long tituloId, Long episodioId);
 
     TituloResponseDTO likeComentario(Long tituloId, Long episodioId, String login, Long comentarioId);
 

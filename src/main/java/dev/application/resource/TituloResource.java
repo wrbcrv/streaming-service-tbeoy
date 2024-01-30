@@ -1,10 +1,13 @@
 package dev.application.resource;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import dev.application.dto.ComentarioDTO;
+import dev.application.dto.ComentarioResponseDTO;
 import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
@@ -117,6 +120,18 @@ public class TituloResource {
         } catch (UnauthorizedException e) {
             return Response.status(Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("/{tituloId}/episodios/{episodioId}/comentarios")
+    public Response getComentarios(@PathParam("tituloId") Long tituloId, @PathParam("episodioId") Long episodioId) {
+        List<ComentarioResponseDTO> comentarios = tituloService.getComentarios(tituloId, episodioId);
+
+        List<ComentarioResponseDTO> reversedComentarios = comentarios.stream()
+                .sorted(Comparator.comparingLong(ComentarioResponseDTO::id).reversed())
+                .collect(Collectors.toList());
+
+        return Response.ok(reversedComentarios).build();
     }
 
     @POST

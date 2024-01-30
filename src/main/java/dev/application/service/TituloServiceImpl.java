@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import dev.application.dto.ComentarioDTO;
+import dev.application.dto.ComentarioResponseDTO;
 import dev.application.dto.EpisodioDTO;
 import dev.application.dto.TituloDTO;
 import dev.application.dto.TituloResponseDTO;
@@ -47,7 +48,6 @@ public class TituloServiceImpl implements TituloService {
     @Override
     public List<TituloResponseDTO> listAll() {
         List<Titulo> titulo = tituloRepository.listAll();
-
         return titulo.stream().map(TituloResponseDTO::valueOf).toList();
     }
 
@@ -138,6 +138,19 @@ public class TituloServiceImpl implements TituloService {
         tituloRepository.persist(titulo);
 
         return TituloResponseDTO.valueOf(titulo);
+    }
+
+    @Override
+    public List<ComentarioResponseDTO> getComentarios(Long tituloId, Long episodioId) {
+        Titulo titulo = tituloRepository.findById(tituloId);
+        Episodio episodio = episodioRepository.findById(episodioId);
+
+        if (titulo == null || episodio == null)
+            throw new NotFoundException("Título ou episódio não encontrados");
+
+        List<Comentario> comentarios = episodio.getComentarios();
+
+        return comentarios.stream().map(ComentarioResponseDTO::valueOf).toList();
     }
 
     @Override
